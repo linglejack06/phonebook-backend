@@ -26,4 +26,16 @@ const persons = [
 app.get('/api/persons', (req, res) => {
   res.json(persons);
 });
+app.get('/api/persons/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const person = persons.find((p) => p.id === id);
+  if (person) {
+    res.json(person);
+  } else {
+    res.status(404).end();
+  }
+});
+app.get('/info', (req, res) => {
+  res.send(`<p>Phonebook has information for ${persons.length} people</p><p>${new Date().toLocaleString()}</p>`);
+});
 app.listen(3001);
