@@ -1,7 +1,8 @@
 const express = require('express');
 
 const app = express();
-const persons = [
+app.use(express.json());
+let persons = [
   {
     id: 1,
     name: 'Arto Hellas',
@@ -34,6 +35,32 @@ app.get('/api/persons/:id', (req, res) => {
   } else {
     res.status(404).end();
   }
+});
+app.delete('/api/persons/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  persons = persons.filter((p) => p.id !== id);
+  res.status(204).end();
+});
+const generateId = () => Math.floor(Math.random() * 1000);
+app.post('/api/persons', (req, res) => {
+  const { body } = req;
+  if (!body.name || !body.number) {
+    return res.status(400).json({
+      error: 'Name or Number missing',
+    });
+  }
+  if (persons.find((p) => p.name === body.name)) {
+    return res.status(400).json({
+      error: 'Name already exists in phonebook',
+    });
+  }
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  };
+  persons = persons.concat(person);
+  return res.json(person);
 });
 app.get('/info', (req, res) => {
   res.send(`<p>Phonebook has information for ${persons.length} people</p><p>${new Date().toLocaleString()}</p>`);
