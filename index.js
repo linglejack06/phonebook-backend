@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable consistent-return */
 /* eslint-disable import/no-extraneous-dependencies */
 require('dotenv').config();
@@ -59,9 +60,9 @@ app.post('/api/persons', (req, res) => {
   }
   Person.find({ name: body.name }).then((result) => {
     if (result.length !== 0) {
-      return res.status(400).json({
-        error: 'Name already exists in phonebook',
-      });
+      const person = result[0];
+      person.number = body.number;
+      return person.save().then((savedPerson) => res.json(savedPerson));
     }
     const person = new Person({
       name: body.name,
