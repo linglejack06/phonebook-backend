@@ -12,7 +12,7 @@ mongoose.connect(uri)
   });
 const personSchema = mongoose.Schema({
   name: String,
-  Number: String,
+  number: String,
 });
 personSchema.set('toJSON', {
   transform: (doc, ret) => {

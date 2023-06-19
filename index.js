@@ -57,17 +57,19 @@ app.post('/api/persons', (req, res) => {
       error: 'Name or Number missing',
     });
   }
-  if (Person.find({ name: body.name })) {
-    return res.status(400).json({
-      error: 'Name already exists in phonebook',
+  Person.find({ name: body.name }).then((result) => {
+    if (result.length !== 0) {
+      return res.status(400).json({
+        error: 'Name already exists in phonebook',
+      });
+    }
+    const person = new Person({
+      name: body.name,
+      number: body.number,
     });
-  }
-  const person = new Person({
-    name: body.name,
-    number: body.number,
-  });
-  person.save().then((savedPerson) => {
-    res.json(savedPerson);
+    person.save().then((savedPerson) => {
+      res.json(savedPerson);
+    });
   });
 });
 app.get('/info', (req, res) => {
