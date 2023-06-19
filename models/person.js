@@ -1,8 +1,10 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
 
-const url = process.env.DB_URL;
+const uri = process.env.DB_URI;
 
-mongoose.connect(url)
+mongoose.connect(uri)
   .then(() => console.log('Connected to Database'))
   .catch((error) => {
     console.error(error.message);
@@ -11,6 +13,13 @@ mongoose.connect(url)
 const personSchema = mongoose.Schema({
   name: String,
   Number: String,
+});
+personSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.__v;
+  },
 });
 
 module.exports = mongoose.model('Person', personSchema);
