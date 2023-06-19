@@ -60,15 +60,22 @@ app.post('/api/persons', (req, res) => {
   }
   Person.find({ name: body.name }).then((result) => {
     if (result.length !== 0) {
-      const person = result[0];
-      person.number = body.number;
-      return person.save().then((savedPerson) => res.json(savedPerson));
+      return res.status(400).end();
     }
     const person = new Person({
       name: body.name,
       number: body.number,
     });
     person.save().then((savedPerson) => {
+      res.json(savedPerson);
+    });
+  });
+});
+app.put('/api/persons/:id', (req, res) => {
+  const { body } = req;
+  Person.findById(req.params.id).then((result) => {
+    result.number = body.number;
+    result.save().then((savedPerson) => {
       res.json(savedPerson);
     });
   });
