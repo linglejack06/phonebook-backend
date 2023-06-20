@@ -11,7 +11,11 @@ mongoose.connect(uri)
     process.exit(1);
   });
 const personSchema = mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+  },
   number: String,
 });
 personSchema.set('toJSON', {

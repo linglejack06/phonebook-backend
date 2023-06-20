@@ -50,19 +50,22 @@ app.post('/api/persons', (req, res, next) => {
       name: body.name,
       number: body.number,
     });
-    person.save().then((savedPerson) => {
-      res.json(savedPerson);
-    });
-  })
-    .catch((error) => next(error));
+    person.save()
+      .then((savedPerson) => {
+        res.json(savedPerson);
+      })
+      .catch((error) => next(error));
+  });
 });
-app.put('/api/persons/:id', (req, res) => {
+app.put('/api/persons/:id', (req, res, next) => {
   const { body } = req;
   Person.findById(req.params.id).then((result) => {
     result.number = body.number;
-    result.save().then((savedPerson) => {
-      res.json(savedPerson);
-    });
+    result.save()
+      .then((savedPerson) => {
+        res.json(savedPerson);
+      })
+      .catch((error) => next(error));
   });
 });
 app.get('/info', (req, res) => {
@@ -74,7 +77,9 @@ const errorHandler = (error, req, res, next) => {
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'incorrectly formatted id' });
   }
-
+  if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message });
+  }
   next(error);
 };
 app.use(errorHandler);
